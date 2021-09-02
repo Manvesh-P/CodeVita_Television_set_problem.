@@ -1,0 +1,81 @@
+# CodeVita Television set problem.
+
+list1 = []
+d1 = {}
+
+def nod(q):
+    
+    d = {1:31, 2:28, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
+    return d[q]
+
+
+def revenue(d1, N, R1, R2, Target, srooms, nrooms):       # srooms are special rooms with T.V. and nrooms are normal rooms.
+    rev = 0
+    
+    for i in d1:
+        if i <= nrooms:
+            
+            rev = rev + (i * R2 * d1[i])
+            
+        elif i > (nrooms + srooms):
+            
+            q = nrooms
+            w = srooms
+            rev = rev + (((q * R2) + (w * R1)) * d1[i])
+            
+        elif nrooms < i <= (nrooms + srooms):
+            
+            q1 = nrooms
+            w1 = i - nrooms
+            rev = rev + (((q1 * R2) + (w1 * R1)) * d1[i])
+            
+    if rev >= Target:
+        
+        print(srooms)
+        return
+    
+    else:
+        if srooms >= 0 and srooms <= N and nrooms >= 0 and nrooms <= N:
+            
+            nrooms -= 1
+            srooms += 1
+            revenue(d1, N, R1, R2, Target, srooms, nrooms) 
+            
+        else:
+            
+            print(N)
+            return
+        
+        
+
+# Inputs
+
+N = int(input("Enter the number of rooms in the hospital: "))
+R1, R2 = map(int, input("Enter the price of rooms with and without T.V:").split())
+Target = int(input("Enter the revenue target: "))
+
+sum1 = 0
+
+
+# This nested loop is for calculating how many people visit the hopital in a day in a given month, throughout the year.
+
+for M in range(1, 13):
+    for D in range(1, nod(M) + 1):
+        sum1 = sum1 + (((6 - M)**2) + abs(D - 15))
+        list1.append(sum1)
+        sum1 = 0
+print(len(list1))
+
+
+# This loop is to convert the list (people visited in 365 days to how many people visited with frequency).
+# I mean if we look at the patients visiting, all are just a random numbers between 0 to 52 with repetition.
+
+for i in range(0, len(list1)):
+    if list1[i] not in d1:
+        d1[list1[i]] = 1
+    else:
+        d1[list1[i]] += 1
+        
+        
+# Function call
+revenue(d1, N, R1, R2, Target, 0, N)
